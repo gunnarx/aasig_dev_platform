@@ -3,6 +3,7 @@
 # Start from bin dir
 cd "$(dirname "$0")"
 MYDIR="$PWD"
+PROJDIR="$MYDIR/.."
 
 # Defaults
 lunchconfig=hikey960-userdebug
@@ -17,7 +18,7 @@ fail_target() {
 
 required_file() {
   local d="$PWD"
-  cd "$MYDIR/.."  # files specified relative to root of project
+  cd "$PROJDIR"  # files specified relative to root of project
   if [ -f "$1" ] ; then
     echo "Found: $1"
   else
@@ -42,6 +43,11 @@ case $AASIGDP_TARGET in
   imx8)
     required_file "vendor/nxp/imx-p9.0.0_2.3.0.tar.gz"
     lunchconfig=mek_8q-userdebug
+    ;;
+  # RENESAS R-Car M3 starter-kit
+  h3ulcb)
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3.zip"
+    lunchconfig=salvator-userdebug
     ;;
   # RENESAS R-Car M3 starter-kit
   m3ulcb)
@@ -72,24 +78,94 @@ case $AASIGDP_TARGET in
     tar --strip-components=1 -xf $pkg  
     cd -
     ;;
+  # RENESAS R-Car H3 starter-kit
+  h3ulcb)
+    export BUILD_BOOTLOADERS=true
+    export BUILD_BOOTLOADERS_SREC=true
+    pkg="../vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3.zip"
+    pkg="REE-EG_Android-P-2019_08E-v3.21.0_H3.zip"
+    echo "Unpacking $pkg"
+    # We need to strip off the unnecessary top level dir named "imx-p9.0.0_2.3.0/"
+    # This unpacks into aosp directory, and consequently aosp/vendor/nxp/...
+    cd "$PROJDIR/vendor/renesas"
+    unzip -u $pkg
+
+    # Sanity check results:
+
+    failed_prereqs=
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/bsp/RENESAS_RCH3M3M3N_Android_P_ReleaseNote_2019_08E.zip"
+    check_required_files_result
+
+    # For H3:
+    failed_prereqs=
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/gfx/RCH3G001A9001ZDO_1_1_0.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/gfx/RTM0RC7795GQGG0001SA90C_1_1_0.zip"
+    # For M3: RCM3G001A9001ZDO_1_1_0.zip
+    # For M3: RTM0RC7796GQGG0001SA90C_1_1_0.zip
+    # For M3N: RCN3G001A9001ZDO_1_1_0.zip
+    # For M3N: RTM0RC7796GQGGB001SA90C_1_1_0.zip
+
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/adsp/RCG3AHFWN0203ZDP_1_0_16.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/adsp/RCG3AHIFA9001ZDP_1_0_16.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/adsp/RCG3AHPDA9001ZDO_1_0_16.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/adsp/RCG3AHPLN0203ZDO_1_0_16.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RCG3VUDRA9001ZDO_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XCMCTL30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XV263D30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XV264D30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XV264E30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XV265D30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVCMND30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVCMNE30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVM4VD30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVVP8D30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVVP8E30SA90C_3_0_19.zip"
+    required_file "vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/omx/RTM0AC0000XVVP9D30SA90C_3_0_19.zip"
+
+    check_required_files_result
+    failed_prereqs=
+
+    cd "$PROJDIR/vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/bsp"
+    unzip -u "RENESAS_RCH3M3M3N_Android_P_ReleaseNote_2019_08E.zip"
+
+    # Restructure according to the instructions of the Renesas documentation:
+    cd RENESAS_RCH3M3M3N_Android_P_ReleaseNote_2019_08E/
+    rm -rf pkgs_dir
+    mkdir pkgs_dir
+    mv $PROJDIR/vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3/source/proprietary/{omx,adsp,gfx} pkgs_dir/
+
+    ls pkgs_dir
+
+    # Renesas unpack script
+    ./walkthrough.sh H3
+    cd -
+    ;;
+
   # RENESAS R-Car M3 starter-kit
   m3ulcb)
+    echo
+    echo "PLEASE IMPLEMENT $AASIGDP_TARGET in $0"
     ;;
   hikey960)
+    echo
+    echo "PLEASE IMPLEMENT $AASIGDP_TARGET in $0"
     ;;
   hikey970)
+    echo
+    echo "PLEASE IMPLEMENT $AASIGDP_TARGET in $0"
     ;;
   *)
-    echo UNEXPECTED  # We should never reach this
+    echo
+    echo UNEXPECTED VALUE for AASIGDP_TARGET # We should never reach this
     ;;
 esac
 
-cd ../aosp
+check_required_files_result
 
 # Set up and build
 # Not using -x flag because it lists everything in the called
 # scripts as well (envesetup, lunch, ... they are all scripts)
-cd "$MYDIR/../aosp"
+cd "$PROJDIR/aosp"
 echo '+ source ./build/envsetup.sh'
 source ./build/envsetup.sh
 set -x

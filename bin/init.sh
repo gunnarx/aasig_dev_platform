@@ -25,10 +25,21 @@ case $AASIGDP_TARGET in
     url=https://source.codeaurora.org/external/imx/imx-manifest.git
     branch=imx-android-pie
     ;;
+  # RENESAS R-Car H3 starter-kit
+  h3ulcb)
+    manifest=
+    url="https://android.googlesource.com/platform/manifest"
+    branch="android-9.0.0_r35"
+    # These are really for the build rather than init
+    export TARGET_BOARD_PLATFORM=r8a7795
+    export H3_OPTION=8GB
+    ;;
   # RENESAS R-Car M3 starter-kit
   m3ulcb)
     manifest=TBD
+    export TARGET_BOARD_PLATFORM=r8a7796
     ;;
+  # (M3N: TARGET_BOARD_PLATFORM=r8a77965)
   hikey960)
     ;;
   hikey970)
@@ -77,6 +88,9 @@ chmod 755 ../bin/repo
 case $AASIGDP_TARGET in
   # NXP i.mx8 (e.g. EVK board)
   imx8)
+    ;;
+  # RENESAS R-Car H3 starter-kit
+  h3ulcb)
     ;;
   # RENESAS R-Car M3 starter-kit
   m3ulcb)
