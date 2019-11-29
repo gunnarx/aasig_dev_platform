@@ -67,10 +67,11 @@ esac
 check_required_files_result
 
 # Continue with additional steps (Unpack, apply patches etc.)
+failed_prereqs=
 case $AASIGDP_TARGET in
   # NXP i.mx8 (e.g. EVK board)
   imx8)
-    cd ../aosp
+    cd "$PROJDIR/aosp"
     pkg="../vendor/nxp/imx-p9.0.0_2.3.0.tar.gz"
     echo "Unpacking $pkg"
     # We need to strip off the unnecessary top level dir named "imx-p9.0.0_2.3.0/"
@@ -80,8 +81,13 @@ case $AASIGDP_TARGET in
     ;;
   # RENESAS R-Car H3 starter-kit
   h3ulcb)
+    export TARGET_BOARD_PLATFORM=r8a7795
+    export H3_OPTION=8GB  # Modify this for a 4GB board
     export BUILD_BOOTLOADERS=true
     export BUILD_BOOTLOADERS_SREC=true
+    export board_name=h3ulcb  # (the docs only mention salvator)
+    # Optionally set to true
+    export ENABLE_ADSP=
     pkg="../vendor/renesas/REE-EG_Android-P-2019_08E-v3.21.0_H3.zip"
     pkg="REE-EG_Android-P-2019_08E-v3.21.0_H3.zip"
     echo "Unpacking $pkg"
