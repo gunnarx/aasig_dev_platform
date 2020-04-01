@@ -1,0 +1,25 @@
+#!/bin/bash -x
+
+set -e
+
+test -n "$AASIGDP_TARGET"
+
+cd "$(dirname "$0")"
+cd ../docker
+
+### optional - restart everything
+if true ; then
+   make kill
+   make rm
+   make build
+   make run
+fi
+
+# Execute full build
+cd ..
+docker exec -ti aasigdp /aasig_dev_platform/bin/init_and_build_${AASIGDP_TARGET}.sh
+
+echo DONE : COPYING RESULT NOW
+echo Warning the out dir is about 50G...
+docker cp aasigdp:/aasig_dev_platform/build_result/ docker_build_result
+
